@@ -204,7 +204,7 @@ footer{padding:70px 24px 90px;text-align:center;color:var(--dim);font-size:.72re
       const size=Math.min(W*0.13,H*0.22);
       ox.fillStyle='#fff';ox.textAlign='center';ox.textBaseline='middle';
       ox.font=`italic ${size}px 'Instrument Serif', serif`;
-      ox.fillText(text,W/2,H/2);
+      ox.fillText(text, off.width / 2, off.height / 2);
       const d=ox.getImageData(0,0,W,H).data,pts=[],gap=Math.max(4,Math.round(4*devicePixelRatio));
       for(let y=0;y<H;y+=gap)for(let x=0;x<W;x+=gap)if(d[(y*W+x)*4+3]>128)pts.push([x,y]);
       return pts;
