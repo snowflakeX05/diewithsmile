@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>—</title>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Kanit:wght@200;300;400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--ink:#eae6ff;--dim:rgba(234,230,255,.45);--hot:#ff6b9d;--ice:#7ee8fa}
+html{scroll-behavior:smooth}
+body{background:#05040e;color:var(--ink);font-family:'Kanit',sans-serif;font-weight:300;
+  overflow-x:hidden;cursor:none}
+.serif{font-family:'Instrument Serif',serif;font-style:italic;font-weight:400}
+
+/* เคอร์เซอร์ */
+#cur,#dot{position:fixed;top:0;left:0;pointer-events:none;z-index:999;border-radius:50%;
+  mix-blend-mode:difference}
+#cur{width:34px;height:34px;border:1px solid #fff;transition:width .3s,height .3s,opacity .3s}
+#dot{width:4px;height:4px;background:#fff}
+body.hov #cur{width:66px;height:66px;opacity:.5}
+
+/* เกรน + วิกเน็ตต์ */
+#grain{position:fixed;inset:-50%;z-index:900;pointer-events:none;opacity:.05;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  animation:gr .4s steps(2) infinite}
+@keyframes gr{0%{transform:translate(0,0)}50%{transform:translate(-3%,2%)}100%{transform:translate(2%,-3%)}}
+#vig{position:fixed;inset:0;z-index:800;pointer-events:none;
+  background:radial-gradient(ellipse at center,transparent 40%,rgba(5,4,14,.85) 100%)}
+
+/* ล็อกสกรีน */
+#lock{position:fixed;inset:0;z-index:1000;background:#05040e;display:flex;
+  flex-direction:column;align-items:center;justify-content:center;gap:26px;transition:opacity 1.2s,visibility 1.2s}
+#lock.off{opacity:0;visibility:hidden}
+#lock p{color:var(--dim);font-size:.9rem;letter-spacing:3px;text-transform:uppercase}
+#pin{background:none;border:none;border-bottom:1px solid rgba(234,230,255,.25);color:var(--ink);
+  font-family:'Instrument Serif',serif;font-size:2rem;text-align:center;width:230px;outline:none;
+  padding:10px;letter-spacing:8px;cursor:none}
+#pin:focus{border-color:var(--hot)}
+.shake{animation:sh .4s}
+@keyframes sh{25%{transform:translateX(-9px)}75%{transform:translateX(9px)}}
+
+/* เลย์เอาต์ */
+main{position:relative;z-index:10}
+section{min-height:100vh;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;padding:90px 24px;position:relative}
+#hero{height:100vh;padding:0}
+#pcanvas{position:fixed;inset:0;z-index:5}
+.scroll-hint{position:absolute;bottom:44px;font-size:.7rem;letter-spacing:4px;color:var(--dim);
+  text-transform:uppercase;animation:bob 2.4s ease-in-out infinite}
+@keyframes bob{50%{transform:translateY(10px);opacity:.4}}
+
+.eyebrow{font-size:.68rem;letter-spacing:5px;text-transform:uppercase;color:var(--hot);margin-bottom:22px}
+h2{font-family:'Instrument Serif',serif;font-style:italic;font-weight:400;
+  font-size:clamp(1.8rem,5.5vw,3.2rem);line-height:1.25;text-align:center;max-width:20ch}
+
+/* เผยทีละคำ */
+.rv span{display:inline-block;opacity:0;transform:translateY(24px) rotate(4deg);filter:blur(8px);
+  transition:.9s cubic-bezier(.16,1,.3,1)}
+.rv.on span{opacity:1;transform:none;filter:blur(0)}
+
+/* โลก */
+#globe{width:min(78vw,520px);aspect-ratio:1}
+.legend{display:flex;gap:40px;margin-top:26px;font-size:1rem;color:var(--ink)}
+
+/* นับเวลา */
+.cd{display:flex;gap:clamp(16px,5vw,54px);margin-top:14px}
+.u{text-align:center}
+.u .n{font-family:'Instrument Serif',serif;font-size:clamp(2.6rem,10vw,5.5rem);line-height:1;
+  background:linear-gradient(180deg,var(--ink),rgba(126,232,250,.35));-webkit-background-clip:text;
+  -webkit-text-fill-color:transparent}
+.u .l{font-size:.62rem;letter-spacing:4px;text-transform:uppercase;color:var(--dim);margin-top:10px}
+
+/* การ์ดเอียง 3D */
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:18px;
+  max-width:940px;width:100%;margin-top:40px}
+.tc{position:relative;padding:34px 26px;border-radius:20px;min-height:200px;
+  background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.09);
+  backdrop-filter:blur(20px);transform-style:preserve-3d;transition:transform .18s ease-out,border-color .4s;
+  display:flex;flex-direction:column;justify-content:space-between;overflow:hidden}
+.tc:hover{border-color:rgba(255,107,157,.5)}
+.tc::after{content:'';position:absolute;width:340px;height:340px;border-radius:50%;pointer-events:none;
+  background:radial-gradient(circle,rgba(255,107,157,.16),transparent 62%);
+  left:var(--mx,50%);top:var(--my,50%);transform:translate(-50%,-50%);opacity:0;transition:opacity .4s}
+.tc:hover::after{opacity:1}
+.tc .idx{font-size:.62rem;letter-spacing:3px;color:var(--hot)}
+.tc .txt{font-family:'Instrument Serif',serif;font-style:italic;font-size:1.28rem;line-height:1.5;font-weight:300}
+
+/* ปุ่มเสียง */
+#snd{position:fixed;right:22px;bottom:22px;z-index:950;width:46px;height:46px;border-radius:50%;
+  border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.04);backdrop-filter:blur(10px);
+  color:var(--ink);cursor:none;font-size:.9rem;display:grid;place-items:center}
+footer{padding:70px 24px 90px;text-align:center;color:var(--dim);font-size:.72rem;letter-spacing:3px;position:relative;z-index:10}
+@media(hover:none){body{cursor:auto}#cur,#dot{display:none}}
+</style>
+</head>
+<body>
+
+<div id="lock">
+  <p>วันเกิดชั้นกับเธอ</p>
+  <input id="pin" maxlength="4" placeholder="••••" autocomplete="off">
+</div>
+
+<canvas id="pcanvas"></canvas>
+<div id="cur"></div><div id="dot"></div>
+<div id="grain"></div><div id="vig"></div>
+
+<!-- โค้ดสำหรับใส่ไฟล์เพลงของตัวเอง (เปลี่ยนชื่อ our-song.mp3 ให้ตรงกับไฟล์เพลงจริงๆ) -->
+<audio id="myAudio" src="star.mp3" loop></audio>
+<button id="snd">♪</button>
+
+<main>
+  <section id="hero"><div class="scroll-hint">scroll</div></section>
+
+  <section>
+    <div class="eyebrow">ระยะทาง</div>
+    <h2 class="rv">ห่างกันตั้ง259กว่าโล แต่พี่รู้สึกเหมือนอ้วนอยู่ใกล้ๆตลอดเลยยยย</h2>
+    <canvas id="globe"></canvas>
+    <div class="legend">
+      <div style="display:flex;align-items:center;gap:8px;">
+        <span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--ice);box-shadow:0 0 10px var(--ice);"></span>โคราช
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--hot);box-shadow:0 0 10px var(--hot);"></span>กรุงเทพฯ
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2 class="rv" style="margin-bottom:34px">ระยะเวลาที่พี่มีความสุขได้ทุกกกวันเพราะมีอ้วนเข้ามาในชีวิต</h2>
+    <div class="cd" id="cd"></div>
+  </section>
+
+  <section>
+    <h2 class="rv">ความรู้สึกของพี่ที่อยากบอกอ้วน</h2>
+    <div class="grid" id="grid"></div>
+  </section>
+</main>
+<footer>made for you mylove 💗 · <span id="yr"></span></footer>
+
+<script>
+    /* ══════ แก้ตรงนี้ที่เดียว ══════ */
+    const C = {
+      pin: '1125',                        
+      words: ['อยากไปกอดอ้วนนนน', 'คิดถึงอ้วน', 'รักอ้วนนะ 💗🧸'],
+      start: '2026-05-30T00:00:00',       
+      // หลอกพิกัดเพื่อให้เส้นโค้งวาดได้กว้างสวยงามบนลูกโลก
+      a: {name:'โคราช', lat: 35.00, lng: 45.00,  tz:'Asia/Bangkok'},
+      b: {name:'กรุงเทพฯ',  lat: -15.00, lng: 135.00, tz:'Asia/Bangkok'},
+      notes:[
+        'ตั้งแต่มีอ้วนเข้ามา โลกของพี่มันก็ไม่เหมือนเดิมอีกเลยนะ มันมีความสุขและยิ้มได้เยอะขึ้นมากๆเลย 🥺',
+        'พี่โคตรรู้สึกโชคดีเลยที่มีอ้วนเข้ามาในชีวิต ขอบคุณนะที่เลือกพี่ ขอบคุณที่เข้ามาเป็นความสบายใจให้กัน 💖',
+        'พี่รู้ตัวนะว่าบางทีพี่ก็ทำตัวแย่ๆ งี่เง่า หรือทำให้อ้วนต้องปวดหัว พี่ขอโทษจริงๆ นะคะที่บางครั้งทำให้เทอต้องเหนื่อย 😔',
+        'แต่ถึงพี่จะดื้อไปบ้าง พี่อยากให้อ้วนรู้ไว้นะ ว่าพี่รักอ้วนมากๆ รักเหมือนเดิมตั้งแต่วันแรกและจะรักให้มากกว่าเดิมอีก 🧸',
+        'พี่อาจจะไม่ได้เพอร์เฟกต์ แต่พี่สัญญานะว่าจะพยายามเป็นผู้ชายที่ดีขึ้นเพื่ออ้วน จะดูแลอ้วนและดูแลความรักของเราให้ดีที่สุดเลย ✌🏻',
+        'อยู่เป็นความรัก เป็นรอยยิ้มให้พี่แบบนี้ไปนานๆ นะคะ ไว้ถึงวันที่เราได้เจอกัน พี่จะกอดอ้วนให้ชื่นใจเลย รักอ้วนนะ 💗'
+      ]
+    };
+    /* ═══════════════════════════════ */
+    
+    /* ---------- ดึง Elements ป้องกัน Error ---------- */
+    const pin = document.getElementById('pin');
+    const cdEl = document.getElementById('cd');
+    const gridEl = document.getElementById('grid');
+    const sndEl = document.getElementById('snd');
+    const yrEl = document.getElementById('yr');
+    const myAudio = document.getElementById('myAudio');
+    
+    /* ---------- ล็อกสกรีน ---------- */
+    pin.oninput=()=>{ if(pin.value.length===4){
+      if(pin.value===C.pin){ 
+        document.getElementById('lock').classList.add('off'); 
+        pin.blur(); 
+        
+        // สั่งให้เล่นเพลงอัตโนมัติทันทีที่ใส่รหัสถูก
+        if(myAudio) {
+          myAudio.play();
+          isPlaying = true;
+          if(sndEl) sndEl.textContent = '♫';
+        }
+      }
+      else{ pin.classList.add('shake'); setTimeout(()=>{pin.classList.remove('shake');pin.value=''},420); }
+    }};
+    setTimeout(()=>pin.focus(),400);
+    
+    /* ---------- เคอร์เซอร์ ---------- */
+    const cur = document.getElementById('cur'), dot = document.getElementById('dot');
+    let mx=innerWidth/2,my=innerHeight/2,cx=mx,cy=my;
+    addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;
+      dot.style.transform=`translate(${mx-2}px,${my-2}px)`});
+    (function loop(){cx+=(mx-cx)*.14;cy+=(my-cy)*.14;
+      cur.style.transform=`translate(${cx-17}px,${cy-17}px)`;requestAnimationFrame(loop)})();
+    document.addEventListener('mouseover',e=>document.body.classList.toggle('hov',
+      !!e.target.closest('.tc,button,input')));
+    
+    /* ---------- PARTICLE MORPH TEXT ---------- */
+    const pc=document.getElementById('pcanvas'),px=pc.getContext('2d');
+    let W,H,parts=[],wi=0;
+    const off=document.createElement('canvas'),ox=off.getContext('2d');
+    function resize(){W=pc.width=innerWidth*devicePixelRatio;H=pc.height=innerHeight*devicePixelRatio;
+      pc.style.width=innerWidth+'px';pc.style.height=innerHeight+'px';build(C.words[wi])}
+    function targets(text){
+      off.width=W;off.height=H;ox.clearRect(0,0,W,H);
+      const size=Math.min(W*0.13,H*0.22);
+      ox.fillStyle='#fff';ox.textAlign='center';ox.textBaseline='middle';
+      ox.font=`italic ${size}px 'Instrument Serif', serif`;
+      ox.fillText(text,W/2,H/2);
+      const d=ox.getImageData(0,0,W,H).data,pts=[],gap=Math.max(4,Math.round(4*devicePixelRatio));
+      for(let y=0;y<H;y+=gap)for(let x=0;x<W;x+=gap)if(d[(y*W+x)*4+3]>128)pts.push([x,y]);
+      return pts;
+    }
+    function build(text){
+      const pts=targets(text);
+      for(let i=0;i<Math.max(pts.length,parts.length);i++){
+        if(i<pts.length){
+          if(!parts[i])parts[i]={x:Math.random()*W,y:Math.random()*H,vx:0,vy:0,
+            h:Math.random()<.5?330:190,a:0};
+          parts[i].tx=pts[i][0];parts[i].ty=pts[i][1];parts[i].live=1;
+        }else parts[i].live=0;
+      }
+    }
+    function tick(){
+      px.clearRect(0,0,W,H);
+      const r=110*devicePixelRatio, MX=mx*devicePixelRatio, MY=my*devicePixelRatio;
+      for(const p of parts){
+        const dx=p.tx-p.x,dy=p.ty-p.y;
+        p.vx+=dx*.012;p.vy+=dy*.012;
+        const ex=p.x-MX,ey=p.y-MY,dist=Math.hypot(ex,ey);
+        if(dist<r){const f=(1-dist/r)*3.2;p.vx+=ex/dist*f;p.vy+=ey/dist*f}
+        p.vx*=.88;p.vy*=.88;p.x+=p.vx;p.y+=p.vy;
+        
+        p.a+=((p.live ? 0.9 : 0)-p.a)*.06; 
+        
+        if(p.a<.01)continue;
+        const sp=Math.min(Math.hypot(p.vx,p.vy)/9,1);
+        px.fillStyle=`hsla(${p.h+sp*40},95%,${68+sp*22}%,${p.a})`;
+        px.fillRect(p.x,p.y,1.6*devicePixelRatio,1.6*devicePixelRatio);
+      }
+      requestAnimationFrame(tick);
+    }
+    addEventListener('resize',resize);resize();tick();
+    setInterval(()=>{wi=(wi+1)%C.words.length;build(C.words[wi])},3600);
+    addEventListener('scroll',()=>{pc.style.opacity=Math.max(0,1-scrollY/(innerHeight*.85))});
+    
+    /* ---------- โลกหมุน + เส้นเชื่อม ---------- */
+    const g=document.getElementById('globe'),gx=g.getContext('2d');
+    const v=(la,ln)=>{const p=la*Math.PI/180,l=ln*Math.PI/180;
+      return[Math.cos(p)*Math.sin(l),Math.sin(p),Math.cos(p)*Math.cos(l)]};
+    const A=v(C.a.lat,C.a.lng),B=v(C.b.lat,C.b.lng);
+    const ang=Math.acos(A[0]*B[0]+A[1]*B[1]+A[2]*B[2]);
+    function slerp(t){const s=Math.sin(ang)||1,k1=Math.sin((1-t)*ang)/s,k2=Math.sin(t*ang)/s;
+      return[A[0]*k1+B[0]*k2,A[1]*k1+B[1]*k2,A[2]*k1+B[2]*k2]}
+    let rot=0;
+    function drawGlobe(){
+      const s=g.clientWidth*devicePixelRatio;g.width=g.height=s;
+      const R=s*.38,cx=s/2,cy=s/2,tilt=-.36;
+      const proj=([x,y,z],e=1)=>{
+        let X=x*Math.cos(rot)+z*Math.sin(rot), Z=-x*Math.sin(rot)+z*Math.cos(rot);
+        let Y=y*Math.cos(tilt)-Z*Math.sin(tilt); Z=y*Math.sin(tilt)+Z*Math.cos(tilt);
+        return[cx+X*R*e, cy-Y*R*e, Z];
+      };
+      gx.clearRect(0,0,s,s);
+      
+      // วาดโครงโลก
+      gx.strokeStyle='rgba(126,232,250,.10)';gx.lineWidth=devicePixelRatio;
+      for(let la=-60;la<=60;la+=30){gx.beginPath();
+        for(let ln=0;ln<=360;ln+=4){const[X,Y,Z]=proj(v(la,ln));
+          if(Z<0){gx.moveTo(X,Y);continue}ln?gx.lineTo(X,Y):gx.moveTo(X,Y)}gx.stroke()}
+      for(let ln=0;ln<360;ln+=30){gx.beginPath();
+        for(let la=-90;la<=90;la+=4){const[X,Y,Z]=proj(v(la,ln));
+          if(Z<0){gx.moveTo(X,Y);continue}la>-90?gx.lineTo(X,Y):gx.moveTo(X,Y)}gx.stroke()}
+      gx.beginPath();gx.arc(cx,cy,R,0,7);gx.strokeStyle='rgba(255,107,157,.25)';gx.stroke();
+      
+      // วาดเส้นโค้งเชื่อม
+      gx.beginPath();gx.strokeStyle='rgba(255,107,157,.9)';gx.lineWidth=1.5*devicePixelRatio;
+      gx.shadowBlur=15;gx.shadowColor='rgba(255,107,157,1)';
+      for(let t=0;t<=1;t+=.01){const e=1+Math.sin(Math.PI*t)*.35; 
+        const[X,Y]=proj(slerp(t),e);t?gx.lineTo(X,Y):gx.moveTo(X,Y)}gx.stroke();
+        
+      // เพิ่มข้อความบอกระยะทางตรงกึ่งกลางเส้นโค้ง
+      const [peakX, peakY] = proj(slerp(0.5), 1 + Math.sin(Math.PI * 0.5) * 0.35);
+      gx.font = `300 ${12 * devicePixelRatio}px 'Kanit', sans-serif`;
+      gx.fillStyle = 'rgba(234, 230, 255, 0.8)';
+      gx.textAlign = 'center';
+      gx.shadowBlur = 0; // ปิดแสงรอบตัวหนังสือให้อ่านง่าย
+      gx.fillText('259 km', peakX, peakY - (12 * devicePixelRatio));
+
+      // วาดไอคอนหัวใจวิ่งไปมาบนเส้น
+      const t=(Date.now()%3000)/3000,[dX,dY]=proj(slerp(t),1+Math.sin(Math.PI*t)*.35);
+      gx.font = `${14 * devicePixelRatio}px sans-serif`;
+      gx.textAlign = 'center';
+      gx.textBaseline = 'middle';
+      gx.shadowBlur = 15;
+      gx.shadowColor = '#ff6b9d';
+      gx.fillText('❤️', dX, dY);
+      
+      // วาดจุดสองจุดให้ใหญ่ขึ้นเห็นชัดๆ
+      [[A,'#7ee8fa'],[B,'#ff6b9d']].forEach(([pt,col])=>{const[X,Y,Z]=proj(pt);
+        if(Z<0)return;gx.beginPath();gx.arc(X,Y,5*devicePixelRatio,0,7);
+        gx.fillStyle=col;gx.shadowBlur=10;gx.shadowColor=col;gx.fill()});
+      gx.shadowBlur=0;rot+=.0035;requestAnimationFrame(drawGlobe);
+    }
+    drawGlobe();
+    
+    /* ---------- นับเวลาที่คุยกัน ---------- */
+    const L={days:'วัน',hours:'ชม.',minutes:'นาที',seconds:'วิ'};
+    setInterval(()=>{
+      let d = new Date() - new Date(C.start); 
+      if (d < 0) d = 0;
+      
+      const val = {
+        days: Math.floor(d/864e5),
+        hours: Math.floor(d/36e5)%24,
+        minutes: Math.floor(d/6e4)%60,
+        seconds: Math.floor(d/1e3)%60
+      };
+      
+      if(cdEl) cdEl.innerHTML=Object.keys(val).map(k=>
+        `<div class="u"><div class="n">${String(val[k]).padStart(2,'0')}</div><div class="l">${L[k]}</div></div>`).join('');
+    },1000);
+    
+    /* ---------- การ์ดเอียง 3D ---------- */
+    if(gridEl) {
+      gridEl.innerHTML=C.notes.map((n,i)=>
+        `<div class="tc"><div class="idx">${String(i+1).padStart(2,'0')}</div><div class="txt">${n}</div></div>`).join('');
+    }
+    document.querySelectorAll('.tc').forEach(c=>{
+      c.onmousemove=e=>{const r=c.getBoundingClientRect(),x=e.clientX-r.left,y=e.clientY-r.top;
+        c.style.setProperty('--mx',x+'px');c.style.setProperty('--my',y+'px');
+        c.style.transform=`perspective(900px) rotateY(${(x/r.width-.5)*13}deg) rotateX(${-(y/r.height-.5)*13}deg) translateZ(14px)`};
+      c.onmouseleave=()=>c.style.transform='';
+    });
+    
+    /* ---------- เผยข้อความทีละคำ ---------- */
+    document.querySelectorAll('.rv').forEach(el=>{
+      el.innerHTML=el.textContent.trim().split(' ').map(w=>`<span>${w}</span>`).join(' ');
+      [...el.children].forEach((s,i)=>s.style.transitionDelay=i*.07+'s');
+    });
+    
+    const observer = new IntersectionObserver(es => es.forEach(e => e.isIntersecting && e.target.classList.add('on')), { threshold: .35 });
+    document.querySelectorAll('.rv').forEach(el => observer.observe(el));
+    
+    /* ---------- ปุ่มเสียงเปิด/ปิดไฟล์เพลง MP3 ---------- */
+    let isPlaying = false;
+    if(sndEl && myAudio) {
+      sndEl.onclick = () => {
+        if (isPlaying) {
+          myAudio.pause();
+          sndEl.textContent = '♪';
+        } else {
+          myAudio.play();
+          sndEl.textContent = '♫';
+        }
+        isPlaying = !isPlaying;
+      };
+    }
+    if(yrEl) yrEl.textContent=new Date().getFullYear();
+</script>
+</body>
+</html>
