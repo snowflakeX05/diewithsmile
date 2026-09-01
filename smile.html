@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>—</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Kanit:wght@200;300;400&display=swap" rel="stylesheet">
@@ -22,10 +22,7 @@
 }
 
 html{
-  scroll-behavior:smooth;
-  width:100%;
-  max-width:100%;
-  overflow-x:hidden;
+  scroll-behavior:smooth
 }
 
 body{
@@ -34,9 +31,7 @@ body{
   font-family:'Kanit',sans-serif;
   font-weight:300;
   overflow-x:hidden;
-  cursor:none;
-  width:100%;
-  max-width:100%;
+  cursor:none
 }
 
 .serif{
@@ -161,10 +156,7 @@ body.hov #cur{
 /* เลย์เอาต์ */
 main{
   position:relative;
-  z-index:10;
-  width:100%;
-  max-width:100%;
-  overflow:hidden;
+  z-index:10
 }
 
 section{
@@ -174,26 +166,23 @@ section{
   align-items:center;
   justify-content:center;
   padding:90px 24px;
-  position:relative;
-  width:100%;
-  max-width:100%;
-  overflow:hidden;
+  position:relative
 }
 
 #hero{
   height:100vh;
-  padding:0;
-  overflow:hidden;
+  padding:0
 }
 
+/* แก้ Particle ให้เต็มจอและไม่เบี้ยวบนมือถือ */
 #pcanvas{
   position:fixed;
   inset:0;
-  z-index:5;
   width:100vw;
   height:100vh;
   max-width:100vw;
-  pointer-events:none;
+  z-index:5;
+  pointer-events:none
 }
 
 .scroll-hint{
@@ -249,8 +238,7 @@ h2{
 /* โลก */
 #globe{
   width:min(78vw,520px);
-  aspect-ratio:1;
-  max-width:100%;
+  aspect-ratio:1
 }
 
 .legend{
@@ -265,8 +253,7 @@ h2{
 .cd{
   display:flex;
   gap:clamp(16px,5vw,54px);
-  margin-top:14px;
-  max-width:100%;
+  margin-top:14px
 }
 
 .u{
@@ -297,7 +284,10 @@ h2{
 /* การ์ดเอียง 3D */
 .grid{
   display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(230px,1fr));
+  grid-template-columns:repeat(
+    auto-fit,
+    minmax(230px,1fr)
+  );
   gap:18px;
   max-width:940px;
   width:100%;
@@ -313,7 +303,9 @@ h2{
   border:1px solid rgba(255,255,255,.09);
   backdrop-filter:blur(20px);
   transform-style:preserve-3d;
-  transition:transform .18s ease-out,border-color .4s;
+  transition:
+    transform .18s ease-out,
+    border-color .4s;
   display:flex;
   flex-direction:column;
   justify-content:space-between;
@@ -390,59 +382,7 @@ footer{
   z-index:10
 }
 
-/* ==================================================
-   MOBILE FIX
-   ================================================== */
-
-@media (max-width:600px){
-
-  section{
-    padding-left:18px;
-    padding-right:18px;
-  }
-
-  h2{
-    width:100%;
-    max-width:100%;
-    font-size:clamp(1.7rem,7vw,2.5rem);
-    overflow-wrap:break-word;
-  }
-
-  #globe{
-    width:min(82vw,420px);
-    max-width:82vw;
-  }
-
-  .legend{
-    gap:22px;
-    flex-wrap:wrap;
-    justify-content:center;
-  }
-
-  .grid{
-    width:100%;
-    max-width:100%;
-  }
-
-  .tc{
-    width:100%;
-  }
-
-  .cd{
-    gap:18px;
-  }
-
-  .u .n{
-    font-size:clamp(2.3rem,12vw,4rem);
-  }
-
-  #snd{
-    right:20px;
-    bottom:20px;
-  }
-}
-
-@media (hover:none){
+@media(hover:none){
   body{
     cursor:auto
   }
@@ -450,14 +390,43 @@ footer{
   #cur,#dot{
     display:none
   }
+}
 
-  #pin{
-    cursor:text
+/* ปรับเฉพาะมือถือ */
+@media(max-width:600px){
+
+  section{
+    padding-left:18px;
+    padding-right:18px
   }
 
-  #snd{
-    cursor:pointer
+  #hero{
+    min-height:100svh;
+    height:100svh
   }
+
+  .scroll-hint{
+    bottom:40px
+  }
+
+  h2{
+    max-width:100%;
+    font-size:clamp(
+      1.8rem,
+      7vw,
+      2.5rem
+    )
+  }
+
+  .legend{
+    gap:22px;
+    font-size:.9rem
+  }
+
+  .grid{
+    grid-template-columns:1fr
+  }
+
 }
 </style>
 </head>
@@ -466,7 +435,13 @@ footer{
 
 <div id="lock">
   <p>วันเกิดชั้นกับเธอ</p>
-  <input id="pin" maxlength="4" placeholder="••••" autocomplete="off">
+
+  <input
+    id="pin"
+    maxlength="4"
+    placeholder="••••"
+    autocomplete="off"
+  >
 </div>
 
 <canvas id="pcanvas"></canvas>
@@ -488,9 +463,12 @@ footer{
     <div class="scroll-hint">scroll</div>
   </section>
 
+
   <section>
 
-    <div class="eyebrow">ระยะทาง</div>
+    <div class="eyebrow">
+      ระยะทาง
+    </div>
 
     <h2 class="rv">
       ห่างกันตั้ง259กว่าโล แต่พี่รู้สึกเหมือนอ้วนอยู่ใกล้ๆตลอดเลยยยย
@@ -501,42 +479,58 @@ footer{
     <div class="legend">
 
       <div style="display:flex;align-items:center;gap:8px;">
-        <span style="
-          display:inline-block;
-          width:10px;
-          height:10px;
-          border-radius:50%;
-          background:var(--ice);
-          box-shadow:0 0 10px var(--ice);
-        "></span>
+        <span
+          style="
+            display:inline-block;
+            width:10px;
+            height:10px;
+            border-radius:50%;
+            background:var(--ice);
+            box-shadow:0 0 10px var(--ice);
+          "
+        ></span>
+
         โคราช
       </div>
 
       <div style="display:flex;align-items:center;gap:8px;">
-        <span style="
-          display:inline-block;
-          width:10px;
-          height:10px;
-          border-radius:50%;
-          background:var(--hot);
-          box-shadow:0 0 10px var(--hot);
-        "></span>
+
+        <span
+          style="
+            display:inline-block;
+            width:10px;
+            height:10px;
+            border-radius:50%;
+            background:var(--hot);
+            box-shadow:0 0 10px var(--hot);
+          "
+        ></span>
+
         กรุงเทพฯ
+
       </div>
 
     </div>
 
   </section>
 
+
   <section>
 
-    <h2 class="rv" style="margin-bottom:34px">
+    <h2
+      class="rv"
+      style="margin-bottom:34px"
+    >
       ระยะเวลาที่พี่มีความสุขได้ทุกกกวันเพราะมีอ้วนเข้ามาในชีวิต
     </h2>
 
-    <div class="cd" id="cd"></div>
+    <div
+      class="cd"
+      id="cd"
+    ></div>
 
   </section>
+
 
   <section>
 
@@ -544,7 +538,10 @@ footer{
       ความรู้สึกของพี่ที่อยากบอกอ้วน
     </h2>
 
-    <div class="grid" id="grid"></div>
+    <div
+      class="grid"
+      id="grid"
+    ></div>
 
   </section>
 
@@ -553,6 +550,7 @@ footer{
 <footer>
   made for you · <span id="yr"></span>
 </footer>
+
 
 <script>
 
@@ -572,15 +570,15 @@ const C = {
 
   a: {
     name:'โคราช',
-    lat: 35.00,
-    lng: 45.00,
+    lat:35.00,
+    lng:45.00,
     tz:'Asia/Bangkok'
   },
 
   b: {
     name:'กรุงเทพฯ',
-    lat: -15.00,
-    lng: 135.00,
+    lat:-15.00,
+    lng:135.00,
     tz:'Asia/Bangkok'
   },
 
@@ -604,12 +602,13 @@ const C = {
 
 /* ═══════════════════════════════ */
 
-const pin = document.getElementById('pin');
-const cdEl = document.getElementById('cd');
-const gridEl = document.getElementById('grid');
-const sndEl = document.getElementById('snd');
-const yrEl = document.getElementById('yr');
-const myAudio = document.getElementById('myAudio');
+
+const pin=document.getElementById('pin');
+const cdEl=document.getElementById('cd');
+const gridEl=document.getElementById('grid');
+const sndEl=document.getElementById('snd');
+const yrEl=document.getElementById('yr');
+const myAudio=document.getElementById('myAudio');
 
 
 /* ---------- ล็อกสกรีน ---------- */
@@ -620,19 +619,20 @@ pin.oninput=()=>{
 
     if(pin.value===C.pin){
 
-      document.getElementById('lock').classList.add('off');
+      document
+        .getElementById('lock')
+        .classList
+        .add('off');
 
       pin.blur();
 
-    }
-
-    else{
+    }else{
 
       pin.classList.add('shake');
 
       setTimeout(()=>{
         pin.classList.remove('shake');
-        pin.value=''
+        pin.value='';
       },420);
 
     }
@@ -646,11 +646,12 @@ setTimeout(()=>pin.focus(),400);
 
 /* ---------- เคอร์เซอร์ ---------- */
 
-const cur = document.getElementById('cur');
-const dot = document.getElementById('dot');
+const cur=document.getElementById('cur');
+const dot=document.getElementById('dot');
 
 let mx=innerWidth/2;
 let my=innerHeight/2;
+
 let cx=mx;
 let cy=my;
 
@@ -676,11 +677,13 @@ addEventListener('mousemove',e=>{
 
 })();
 
-document.addEventListener('mouseover',e=>
-  document.body.classList.toggle(
-    'hov',
-    !!e.target.closest('.tc,button,input')
-  )
+document.addEventListener(
+  'mouseover',
+  e=>
+    document.body.classList.toggle(
+      'hov',
+      !!e.target.closest('.tc,button,input')
+    )
 );
 
 
@@ -695,10 +698,17 @@ const off=document.createElement('canvas');
 const ox=off.getContext('2d');
 
 
-/*
-   แก้ตรงนี้:
-   จำกัด DPR เพื่อไม่ให้ canvas ใหญ่เกินไปบน iPhone
-*/
+/* ตรวจภาษาไทย */
+
+function hasThai(text){
+
+  return /[\u0E00-\u0E7F]/.test(text);
+
+}
+
+
+/* Resize */
+
 function resize(){
 
   const dpr=Math.min(
@@ -706,79 +716,128 @@ function resize(){
     2
   );
 
-  W=pc.width=Math.floor(innerWidth*dpr);
-  H=pc.height=Math.floor(innerHeight*dpr);
+  W=Math.floor(
+    window.innerWidth*dpr
+  );
 
-  pc.style.width=innerWidth+'px';
-  pc.style.height=innerHeight+'px';
+  H=Math.floor(
+    window.innerHeight*dpr
+  );
+
+  pc.width=W;
+  pc.height=H;
+
+  pc.style.width='100vw';
+  pc.style.height='100vh';
 
   build(C.words[wi]);
 
 }
 
 
-/*
-   แก้ตรงนี้:
-   ทำให้ข้อความ Particle ย่ออัตโนมัติ
-   จนพอดีกับความกว้างของหน้าจอ
-*/
+/* สร้างจุดของข้อความ */
+
 function targets(text){
 
   off.width=W;
   off.height=H;
 
-  ox.clearRect(0,0,W,H);
+  ox.clearRect(
+    0,
+    0,
+    W,
+    H
+  );
+
+
+  /*
+    ภาษาไทยใช้ Kanit
+    เพราะ Instrument Serif ไม่มีภาษาไทย
+  */
+
+  const fontFamily=hasThai(text)
+    ? 'Kanit, sans-serif'
+    : 'Instrument Serif, serif';
+
+
+  /*
+    ขนาดเริ่มต้น
+  */
 
   let size=Math.min(
     W*0.13,
-    H*0.22
+    H*0.18
   );
 
+
   ox.font=
-    `italic ${size}px 'Instrument Serif', serif`;
+    `300 ${size}px ${fontFamily}`;
+
+
+  /*
+    จำกัดความกว้างข้อความ
+    ไม่ให้ล้นหน้าจอมือถือ
+  */
 
   const maxWidth=W*0.82;
 
-  const measured=
+  const textWidth=
     ox.measureText(text).width;
 
-  if(measured>maxWidth){
 
-    size *= maxWidth/measured;
+  if(textWidth>maxWidth){
+
+    size*=maxWidth/textWidth;
 
   }
 
+
+  size=Math.max(
+    size,
+    20*devicePixelRatio
+  );
+
+
   ox.font=
-    `italic ${size}px 'Instrument Serif', serif`;
+    `300 ${size}px ${fontFamily}`;
+
 
   ox.fillStyle='#fff';
 
   ox.textAlign='center';
   ox.textBaseline='middle';
 
+
   /*
-     วางตรงกลาง canvas จริงๆ
+    จุดกึ่งกลางจริงของหน้าจอ
   */
+
   ox.fillText(
     text,
     W/2,
     H/2
   );
 
-  const d=
-    ox.getImageData(
-      0,
-      0,
-      W,
-      H
-    ).data;
+
+  const d=ox.getImageData(
+    0,
+    0,
+    W,
+    H
+  ).data;
 
   const pts=[];
 
+
+  /*
+    ระยะห่าง Particle
+  */
+
   const gap=Math.max(
-    4,
-    Math.round(4*devicePixelRatio)
+    5,
+    Math.round(5*devicePixelRatio)
   );
+
 
   for(
     let y=0;
@@ -804,6 +863,7 @@ function targets(text){
 
   }
 
+
   return pts;
 
 }
@@ -813,9 +873,13 @@ function build(text){
 
   const pts=targets(text);
 
+
   for(
     let i=0;
-    i<Math.max(pts.length,parts.length);
+    i<Math.max(
+      pts.length,
+      parts.length
+    );
     i++
   ){
 
@@ -831,7 +895,10 @@ function build(text){
           vx:0,
           vy:0,
 
-          h:Math.random()<.5?330:190,
+          h:
+            Math.random()<.5
+              ?330
+              :190,
 
           a:0
 
@@ -839,14 +906,13 @@ function build(text){
 
       }
 
+
       parts[i].tx=pts[i][0];
       parts[i].ty=pts[i][1];
 
       parts[i].live=1;
 
-    }
-
-    else{
+    }else{
 
       parts[i].live=0;
 
@@ -866,25 +932,44 @@ function tick(){
     H
   );
 
-  const r=110*devicePixelRatio;
 
-  const MX=mx*devicePixelRatio;
-  const MY=my*devicePixelRatio;
+  const r=
+    110*devicePixelRatio;
+
+  const MX=
+    mx*devicePixelRatio;
+
+  const MY=
+    my*devicePixelRatio;
+
 
   for(const p of parts){
 
-    const dx=p.tx-p.x;
-    const dy=p.ty-p.y;
+    const dx=
+      p.tx-p.x;
+
+    const dy=
+      p.ty-p.y;
+
 
     p.vx+=dx*.012;
     p.vy+=dy*.012;
 
-    const ex=p.x-MX;
-    const ey=p.y-MY;
 
-    const dist=Math.hypot(ex,ey);
+    const ex=
+      p.x-MX;
 
-    if(dist<r && dist>0){
+    const ey=
+      p.y-MY;
+
+    const dist=
+      Math.hypot(ex,ey);
+
+
+    if(
+      dist<r &&
+      dist>0
+    ){
 
       const f=
         (1-dist/r)*3.2;
@@ -894,22 +979,31 @@ function tick(){
 
     }
 
+
     p.vx*=.88;
     p.vy*=.88;
 
     p.x+=p.vx;
     p.y+=p.vy;
 
-    p.a+=(
-      (p.live ? 0.9 : 0)-p.a
-    )*.06;
+
+    p.a+=
+      (
+        (p.live?.9:0)-p.a
+      )*.06;
+
 
     if(p.a<.01)continue;
 
+
     const sp=Math.min(
-      Math.hypot(p.vx,p.vy)/9,
+      Math.hypot(
+        p.vx,
+        p.vy
+      )/9,
       1
     );
+
 
     px.fillStyle=
       `hsla(
@@ -919,6 +1013,7 @@ function tick(){
         ${p.a}
       )`;
 
+
     px.fillRect(
       p.x,
       p.y,
@@ -927,6 +1022,7 @@ function tick(){
     );
 
   }
+
 
   requestAnimationFrame(tick);
 
@@ -941,24 +1037,32 @@ addEventListener(
 resize();
 tick();
 
+
 setInterval(()=>{
 
-  wi=(wi+1)%C.words.length;
+  wi=
+    (wi+1)%
+    C.words.length;
 
-  build(C.words[wi]);
+  build(
+    C.words[wi]
+  );
 
 },3600);
 
 
-addEventListener('scroll',()=>{
+addEventListener(
+  'scroll',
+  ()=>{
 
-  pc.style.opacity=
-    Math.max(
-      0,
-      1-scrollY/(innerHeight*.85)
-    );
+    pc.style.opacity=
+      Math.max(
+        0,
+        1-scrollY/(innerHeight*.85)
+      );
 
-});
+  }
+);
 
 
 /* ---------- โลกหมุน + เส้นเชื่อม ---------- */
@@ -979,14 +1083,24 @@ const v=(la,ln)=>{
 
 };
 
-const A=v(C.a.lat,C.a.lng);
-const B=v(C.b.lat,C.b.lng);
+
+const A=v(
+  C.a.lat,
+  C.a.lng
+);
+
+const B=v(
+  C.b.lat,
+  C.b.lng
+);
+
 
 const ang=Math.acos(
   A[0]*B[0]+
   A[1]*B[1]+
   A[2]*B[2]
 );
+
 
 function slerp(t){
 
@@ -1006,15 +1120,19 @@ function slerp(t){
 
 }
 
+
 let rot=0;
+
 
 function drawGlobe(){
 
   const s=
-    g.clientWidth*devicePixelRatio;
+    g.clientWidth*
+    devicePixelRatio;
 
   g.width=s;
   g.height=s;
+
 
   const R=s*.38;
 
@@ -1022,6 +1140,7 @@ function drawGlobe(){
   const cy=s/2;
 
   const tilt=-.36;
+
 
   const proj=([x,y,z],e=1)=>{
 
@@ -1041,6 +1160,7 @@ function drawGlobe(){
       y*Math.sin(tilt)+
       Z*Math.cos(tilt);
 
+
     return[
       cx+X*R*e,
       cy-Y*R*e,
@@ -1048,6 +1168,7 @@ function drawGlobe(){
     ];
 
   };
+
 
   gx.clearRect(
     0,
@@ -1079,7 +1200,10 @@ function drawGlobe(){
     ){
 
       const[X,Y,Z]=
-        proj(v(la,ln));
+        proj(
+          v(la,ln)
+        );
+
 
       if(Z<0){
 
@@ -1088,9 +1212,10 @@ function drawGlobe(){
 
       }
 
-      ln?
-        gx.lineTo(X,Y):
-        gx.moveTo(X,Y);
+
+      ln
+        ? gx.lineTo(X,Y)
+        : gx.moveTo(X,Y);
 
     }
 
@@ -1114,7 +1239,10 @@ function drawGlobe(){
     ){
 
       const[X,Y,Z]=
-        proj(v(la,ln));
+        proj(
+          v(la,ln)
+        );
+
 
       if(Z<0){
 
@@ -1123,9 +1251,10 @@ function drawGlobe(){
 
       }
 
-      la>-90?
-        gx.lineTo(X,Y):
-        gx.moveTo(X,Y);
+
+      la>-90
+        ? gx.lineTo(X,Y)
+        : gx.moveTo(X,Y);
 
     }
 
@@ -1171,7 +1300,8 @@ function drawGlobe(){
   ){
 
     const e=
-      1+Math.sin(Math.PI*t)*.35;
+      1+
+      Math.sin(Math.PI*t)*.35;
 
     const[X,Y]=
       proj(
@@ -1179,9 +1309,10 @@ function drawGlobe(){
         e
       );
 
-    t?
-      gx.lineTo(X,Y):
-      gx.moveTo(X,Y);
+
+    t
+      ? gx.lineTo(X,Y)
+      : gx.moveTo(X,Y);
 
   }
 
@@ -1194,7 +1325,8 @@ function drawGlobe(){
   ]=
     proj(
       slerp(.5),
-      1+Math.sin(Math.PI*.5)*.35
+      1+
+      Math.sin(Math.PI*.5)*.35
     );
 
 
@@ -1213,12 +1345,14 @@ function drawGlobe(){
   gx.fillText(
     '259 km',
     peakX,
-    peakY-(12*devicePixelRatio)
+    peakY-
+      12*devicePixelRatio
   );
 
 
   const t=
     (Date.now()%3000)/3000;
+
 
   const[
     dX,
@@ -1226,7 +1360,8 @@ function drawGlobe(){
   ]=
     proj(
       slerp(t),
-      1+Math.sin(Math.PI*t)*.35
+      1+
+      Math.sin(Math.PI*t)*.35
     );
 
 
@@ -1241,6 +1376,7 @@ function drawGlobe(){
 
   gx.shadowColor='#ff6b9d';
 
+
   gx.fillText(
     '❤️',
     dX,
@@ -1251,36 +1387,40 @@ function drawGlobe(){
   [
     [A,'#7ee8fa'],
     [B,'#ff6b9d']
-  ].forEach(([pt,col])=>{
+  ].forEach(
+    ([pt,col])=>{
 
-    const[
-      X,
-      Y,
-      Z
-    ]=
-      proj(pt);
+      const[
+        X,
+        Y,
+        Z
+      ]=proj(pt);
 
-    if(Z<0)return;
 
-    gx.beginPath();
+      if(Z<0)return;
 
-    gx.arc(
-      X,
-      Y,
-      5*devicePixelRatio,
-      0,
-      7
-    );
 
-    gx.fillStyle=col;
+      gx.beginPath();
 
-    gx.shadowBlur=10;
+      gx.arc(
+        X,
+        Y,
+        5*devicePixelRatio,
+        0,
+        7
+      );
 
-    gx.shadowColor=col;
 
-    gx.fill();
+      gx.fillStyle=col;
 
-  });
+      gx.shadowBlur=10;
+
+      gx.shadowColor=col;
+
+      gx.fill();
+
+    }
+  );
 
 
   gx.shadowBlur=0;
@@ -1292,6 +1432,7 @@ function drawGlobe(){
   );
 
 }
+
 
 drawGlobe();
 
@@ -1305,13 +1446,16 @@ const L={
   seconds:'วิ'
 };
 
+
 setInterval(()=>{
 
   let d=
     new Date()-
     new Date(C.start);
 
+
   if(d<0)d=0;
+
 
   const val={
 
@@ -1329,6 +1473,7 @@ setInterval(()=>{
 
   };
 
+
   if(cdEl){
 
     cdEl.innerHTML=
@@ -1339,6 +1484,7 @@ setInterval(()=>{
           <div class="n">
             ${String(val[k]).padStart(2,'0')}
           </div>
+
           <div class="l">
             ${L[k]}
           </div>
@@ -1357,90 +1503,102 @@ setInterval(()=>{
 if(gridEl){
 
   gridEl.innerHTML=
-    C.notes.map((n,i)=>
+    C.notes
+    .map((n,i)=>
 
       `<div class="tc">
         <div class="idx">
           ${String(i+1).padStart(2,'0')}
         </div>
+
         <div class="txt">
           ${n}
         </div>
       </div>`
 
-    ).join('');
+    )
+    .join('');
 
 }
 
 
-document.querySelectorAll('.tc')
-.forEach(c=>{
+document
+  .querySelectorAll('.tc')
+  .forEach(c=>{
 
-  c.onmousemove=e=>{
+    c.onmousemove=e=>{
 
-    const r=
-      c.getBoundingClientRect();
+      const r=
+        c.getBoundingClientRect();
 
-    const x=
-      e.clientX-r.left;
+      const x=
+        e.clientX-r.left;
 
-    const y=
-      e.clientY-r.top;
+      const y=
+        e.clientY-r.top;
 
-    c.style.setProperty(
-      '--mx',
-      x+'px'
-    );
 
-    c.style.setProperty(
-      '--my',
-      y+'px'
-    );
+      c.style.setProperty(
+        '--mx',
+        x+'px'
+      );
 
-    c.style.transform=
-      `perspective(900px)
-       rotateY(${(x/r.width-.5)*13}deg)
-       rotateX(${-(y/r.height-.5)*13}deg)
-       translateZ(14px)`;
+      c.style.setProperty(
+        '--my',
+        y+'px'
+      );
 
-  };
 
-  c.onmouseleave=()=>
-    c.style.transform='';
+      c.style.transform=
+        `perspective(900px)
+         rotateY(${(x/r.width-.5)*13}deg)
+         rotateX(${-(y/r.height-.5)*13}deg)
+         translateZ(14px)`;
 
-});
+    };
+
+
+    c.onmouseleave=()=>{
+      c.style.transform='';
+    };
+
+  });
 
 
 /* ---------- เผยข้อความทีละคำ ---------- */
 
-document.querySelectorAll('.rv')
-.forEach(el=>{
+document
+  .querySelectorAll('.rv')
+  .forEach(el=>{
 
-  el.innerHTML=
-    el.textContent
-    .trim()
-    .split(' ')
-    .map(w=>
-      `<span>${w}</span>`
-    )
-    .join(' ');
+    el.innerHTML=
+      el.textContent
+      .trim()
+      .split(' ')
+      .map(w=>
+        `<span>${w}</span>`
+      )
+      .join(' ');
 
-  [
-    ...el.children
-  ].forEach((s,i)=>
-    s.style.transitionDelay=
-      i*.07+'s'
-  );
 
-});
+    [
+      ...el.children
+    ].forEach(
+      (s,i)=>
+        s.style.transitionDelay=
+          i*.07+'s'
+    );
+
+  });
 
 
 const observer=
   new IntersectionObserver(
     es=>
-      es.forEach(e=>
-        e.isIntersecting &&
-        e.target.classList.add('on')
+      es.forEach(
+        e=>
+          e.isIntersecting &&
+          e.target.classList.add('on')
       ),
     {
       threshold:.35
@@ -1448,15 +1606,17 @@ const observer=
   );
 
 
-document.querySelectorAll('.rv')
-.forEach(el=>
-  observer.observe(el)
-);
+document
+  .querySelectorAll('.rv')
+  .forEach(
+    el=>observer.observe(el)
+  );
 
 
 /* ---------- ปุ่มเสียง ควบคุมการเล่นเพลง MP3 ---------- */
 
 let isPlaying=false;
+
 
 if(sndEl && myAudio){
 
@@ -1468,22 +1628,22 @@ if(sndEl && myAudio){
 
       sndEl.textContent='♪';
 
-    }
-
-    else{
+    }else{
 
       myAudio
         .play()
-        .catch(e=>
-          console.log(
-            "Audio play blocked",
-            e
-          )
+        .catch(
+          e=>
+            console.log(
+              "Audio play blocked",
+              e
+            )
         );
 
       sndEl.textContent='♫';
 
     }
+
 
     isPlaying=!isPlaying;
 
@@ -1492,9 +1652,12 @@ if(sndEl && myAudio){
 }
 
 
-if(yrEl)
+if(yrEl){
+
   yrEl.textContent=
     new Date().getFullYear();
+
+}
 
 </script>
 
