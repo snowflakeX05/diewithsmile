@@ -139,222 +139,453 @@ footer{padding:70px 24px 90px;text-align:center;color:var(--dim);font-size:.72re
 <footer>made for you mylove 💗 · <span id="yr"></span></footer>
 
 <script>
-    /* ══════ แก้ตรงนี้ที่เดียว ══════ */
-    const C = {
-      pin: '1125',                        
-      words: ['อยากไปกอดอ้วนนนน', 'คิดถึงอ้วน', 'รักอ้วนนะ 💗🧸'],
-      start: '2026-05-30T00:00:00',       
-      // หลอกพิกัดเพื่อให้เส้นโค้งวาดได้กว้างสวยงามบนลูกโลก
-      a: {name:'โคราช', lat: 35.00, lng: 45.00,  tz:'Asia/Bangkok'},
-      b: {name:'กรุงเทพฯ',  lat: -15.00, lng: 135.00, tz:'Asia/Bangkok'},
-      notes:[
-        'ตั้งแต่มีอ้วนเข้ามา โลกของพี่มันก็ไม่เหมือนเดิมอีกเลยนะ มันมีความสุขและยิ้มได้เยอะขึ้นมากๆเลย 🥺',
-        'พี่โคตรรู้สึกโชคดีเลยที่มีอ้วนเข้ามาในชีวิต ขอบคุณนะที่เลือกพี่ ขอบคุณที่เข้ามาเป็นความสบายใจให้กัน 💖',
-        'พี่รู้ตัวนะว่าบางทีพี่ก็ทำตัวแย่ๆ งี่เง่า หรือทำให้อ้วนต้องปวดหัว พี่ขอโทษจริงๆ นะคะที่บางครั้งทำให้เทอต้องเหนื่อย 😔',
-        'แต่ถึงพี่จะดื้อไปบ้าง พี่อยากให้อ้วนรู้ไว้นะ ว่าพี่รักอ้วนมากๆ รักเหมือนเดิมตั้งแต่วันแรกและจะรักให้มากกว่าเดิมอีก 🧸',
-        'พี่อาจจะไม่ได้เพอร์เฟกต์ แต่พี่สัญญานะว่าจะพยายามเป็นผู้ชายที่ดีขึ้นเพื่ออ้วน จะดูแลอ้วนและดูแลความรักของเราให้ดีที่สุดเลย ✌🏻',
-        'อยู่เป็นความรัก เป็นรอยยิ้มให้พี่แบบนี้ไปนานๆ นะคะ ไว้ถึงวันที่เราได้เจอกัน พี่จะกอดอ้วนให้ชื่นใจเลย รักอ้วนนะ 💗'
-      ]
-    };
-    /* ═══════════════════════════════ */
-    
-    /* ---------- ดึง Elements ป้องกัน Error ---------- */
-    const pin = document.getElementById('pin');
-    const cdEl = document.getElementById('cd');
-    const gridEl = document.getElementById('grid');
-    const sndEl = document.getElementById('snd');
-    const yrEl = document.getElementById('yr');
-    const myAudio = document.getElementById('myAudio');
-    
-    /* ---------- ล็อกสกรีน ---------- */
-    pin.oninput=()=>{ if(pin.value.length===4){
-      if(pin.value===C.pin){ 
-        document.getElementById('lock').classList.add('off'); 
-        pin.blur(); 
-        
-        // สั่งให้เล่นเพลงอัตโนมัติทันทีที่ใส่รหัสถูก
-        if(myAudio) {
-          myAudio.play();
-          isPlaying = true;
-          if(sndEl) sndEl.textContent = '♫';
-        }
-      }
-      else{ pin.classList.add('shake'); setTimeout(()=>{pin.classList.remove('shake');pin.value=''},420); }
-    }};
-    setTimeout(()=>pin.focus(),400);
-    
-    /* ---------- เคอร์เซอร์ ---------- */
-    const cur = document.getElementById('cur'), dot = document.getElementById('dot');
-    let mx=innerWidth/2,my=innerHeight/2,cx=mx,cy=my;
-    addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;
-      dot.style.transform=`translate(${mx-2}px,${my-2}px)`});
-    (function loop(){cx+=(mx-cx)*.14;cy+=(my-cy)*.14;
-      cur.style.transform=`translate(${cx-17}px,${cy-17}px)`;requestAnimationFrame(loop)})();
-    document.addEventListener('mouseover',e=>document.body.classList.toggle('hov',
-      !!e.target.closest('.tc,button,input')));
-    
-    /* ---------- PARTICLE MORPH TEXT ---------- */
-    const pc=document.getElementById('pcanvas'),px=pc.getContext('2d');
-    let W,H,parts=[],wi=0;
-    const off=document.createElement('canvas'),ox=off.getContext('2d');
-    function resize(){W=pc.width=innerWidth*devicePixelRatio;H=pc.height=innerHeight*devicePixelRatio;
-      pc.style.width=innerWidth+'px';pc.style.height=innerHeight+'px';build(C.words[wi])}
-    function targets(text){
-      off.width=W;off.height=H;ox.clearRect(0,0,W,H);
-      const size=Math.min(W*0.13,H*0.22);
-      ox.fillStyle='#fff';ox.textAlign='center';ox.textBaseline='middle';
-      ox.font=`italic ${size}px 'Instrument Serif', serif`;
-      ox.fillText(text, off.width / 2, off.height / 2);
-      const d=ox.getImageData(0,0,W,H).data,pts=[],gap=Math.max(4,Math.round(4*devicePixelRatio));
-      for(let y=0;y<H;y+=gap)for(let x=0;x<W;x+=gap)if(d[(y*W+x)*4+3]>128)pts.push([x,y]);
-      return pts;
-    }
-    function build(text){
-      const pts=targets(text);
-      for(let i=0;i<Math.max(pts.length,parts.length);i++){
-        if(i<pts.length){
-          if(!parts[i])parts[i]={x:Math.random()*W,y:Math.random()*H,vx:0,vy:0,
-            h:Math.random()<.5?330:190,a:0};
-          parts[i].tx=pts[i][0];parts[i].ty=pts[i][1];parts[i].live=1;
-        }else parts[i].live=0;
-      }
-    }
-    function tick(){
-      px.clearRect(0,0,W,H);
-      const r=110*devicePixelRatio, MX=mx*devicePixelRatio, MY=my*devicePixelRatio;
-      for(const p of parts){
-        const dx=p.tx-p.x,dy=p.ty-p.y;
-        p.vx+=dx*.012;p.vy+=dy*.012;
-        const ex=p.x-MX,ey=p.y-MY,dist=Math.hypot(ex,ey);
-        if(dist<r){const f=(1-dist/r)*3.2;p.vx+=ex/dist*f;p.vy+=ey/dist*f}
-        p.vx*=.88;p.vy*=.88;p.x+=p.vx;p.y+=p.vy;
-        
-        p.a+=((p.live ? 0.9 : 0)-p.a)*.06; 
-        
-        if(p.a<.01)continue;
-        const sp=Math.min(Math.hypot(p.vx,p.vy)/9,1);
-        px.fillStyle=`hsla(${p.h+sp*40},95%,${68+sp*22}%,${p.a})`;
-        px.fillRect(p.x,p.y,1.6*devicePixelRatio,1.6*devicePixelRatio);
-      }
-      requestAnimationFrame(tick);
-    }
-    addEventListener('resize',resize);resize();tick();
-    setInterval(()=>{wi=(wi+1)%C.words.length;build(C.words[wi])},3600);
-    addEventListener('scroll',()=>{pc.style.opacity=Math.max(0,1-scrollY/(innerHeight*.85))});
-    
-    /* ---------- โลกหมุน + เส้นเชื่อม ---------- */
-    const g=document.getElementById('globe'),gx=g.getContext('2d');
-    const v=(la,ln)=>{const p=la*Math.PI/180,l=ln*Math.PI/180;
-      return[Math.cos(p)*Math.sin(l),Math.sin(p),Math.cos(p)*Math.cos(l)]};
-    const A=v(C.a.lat,C.a.lng),B=v(C.b.lat,C.b.lng);
-    const ang=Math.acos(A[0]*B[0]+A[1]*B[1]+A[2]*B[2]);
-    function slerp(t){const s=Math.sin(ang)||1,k1=Math.sin((1-t)*ang)/s,k2=Math.sin(t*ang)/s;
-      return[A[0]*k1+B[0]*k2,A[1]*k1+B[1]*k2,A[2]*k1+B[2]*k2]}
-    let rot=0;
-    function drawGlobe(){
-      const s=g.clientWidth*devicePixelRatio;g.width=g.height=s;
-      const R=s*.38,cx=s/2,cy=s/2,tilt=-.36;
-      const proj=([x,y,z],e=1)=>{
-        let X=x*Math.cos(rot)+z*Math.sin(rot), Z=-x*Math.sin(rot)+z*Math.cos(rot);
-        let Y=y*Math.cos(tilt)-Z*Math.sin(tilt); Z=y*Math.sin(tilt)+Z*Math.cos(tilt);
-        return[cx+X*R*e, cy-Y*R*e, Z];
-      };
-      gx.clearRect(0,0,s,s);
-      
-      // วาดโครงโลก
-      gx.strokeStyle='rgba(126,232,250,.10)';gx.lineWidth=devicePixelRatio;
-      for(let la=-60;la<=60;la+=30){gx.beginPath();
-        for(let ln=0;ln<=360;ln+=4){const[X,Y,Z]=proj(v(la,ln));
-          if(Z<0){gx.moveTo(X,Y);continue}ln?gx.lineTo(X,Y):gx.moveTo(X,Y)}gx.stroke()}
-      for(let ln=0;ln<360;ln+=30){gx.beginPath();
-        for(let la=-90;la<=90;la+=4){const[X,Y,Z]=proj(v(la,ln));
-          if(Z<0){gx.moveTo(X,Y);continue}la>-90?gx.lineTo(X,Y):gx.moveTo(X,Y)}gx.stroke()}
-      gx.beginPath();gx.arc(cx,cy,R,0,7);gx.strokeStyle='rgba(255,107,157,.25)';gx.stroke();
-      
-      // วาดเส้นโค้งเชื่อม
-      gx.beginPath();gx.strokeStyle='rgba(255,107,157,.9)';gx.lineWidth=1.5*devicePixelRatio;
-      gx.shadowBlur=15;gx.shadowColor='rgba(255,107,157,1)';
-      for(let t=0;t<=1;t+=.01){const e=1+Math.sin(Math.PI*t)*.35; 
-        const[X,Y]=proj(slerp(t),e);t?gx.lineTo(X,Y):gx.moveTo(X,Y)}gx.stroke();
-        
-      // เพิ่มข้อความบอกระยะทางตรงกึ่งกลางเส้นโค้ง
-      const [peakX, peakY] = proj(slerp(0.5), 1 + Math.sin(Math.PI * 0.5) * 0.35);
-      gx.font = `300 ${12 * devicePixelRatio}px 'Kanit', sans-serif`;
-      gx.fillStyle = 'rgba(234, 230, 255, 0.8)';
-      gx.textAlign = 'center';
-      gx.shadowBlur = 0; // ปิดแสงรอบตัวหนังสือให้อ่านง่าย
-      gx.fillText('259 km', peakX, peakY - (12 * devicePixelRatio));
 
-      // วาดไอคอนหัวใจวิ่งไปมาบนเส้น
-      const t=(Date.now()%3000)/3000,[dX,dY]=proj(slerp(t),1+Math.sin(Math.PI*t)*.35);
-      gx.font = `${14 * devicePixelRatio}px sans-serif`;
-      gx.textAlign = 'center';
-      gx.textBaseline = 'middle';
-      gx.shadowBlur = 15;
-      gx.shadowColor = '#ff6b9d';
-      gx.fillText('❤️', dX, dY);
-      
-      // วาดจุดสองจุดให้ใหญ่ขึ้นเห็นชัดๆ
-      [[A,'#7ee8fa'],[B,'#ff6b9d']].forEach(([pt,col])=>{const[X,Y,Z]=proj(pt);
-        if(Z<0)return;gx.beginPath();gx.arc(X,Y,5*devicePixelRatio,0,7);
-        gx.fillStyle=col;gx.shadowBlur=10;gx.shadowColor=col;gx.fill()});
-      gx.shadowBlur=0;rot+=.0035;requestAnimationFrame(drawGlobe);
+  /* ══════ แก้ตรงนี้ที่เดียว ══════ */
+  
+  const C = {
+  
+    pin: '1125',
+  
+    words: ['อยากกอดอ้วน','คิดถึงอ้วน','รักอ้วนนะ💗🧸'],
+  
+    start: '2026-05-30T00:00:00',
+  
+    a: {name:'โคราช',    lat: 35.00, lng: 45.00,  tz:'Asia/Bangkok'},
+  
+    b: {name:'กรุงเทพฯ', lat:-15.00, lng:135.00, tz:'Asia/Bangkok'},
+  
+    notes:[
+  
+      'ตั้งแต่มีอ้วนเข้ามา โลกของพี่มันก็ไม่เหมือนเดิมอีกเลยนะ มันมีความสุขและยิ้มได้เยอะขึ้นมากๆเลย 🥺',
+  
+      'พี่โคตรรู้สึกโชคดีเลยที่มีอ้วนเข้ามาในชีวิต ขอบคุณนะที่เลือกพี่ ขอบคุณที่เข้ามาเป็นความสบายใจให้กัน 💖',
+  
+      'พี่รู้ตัวนะว่าบางทีพี่ก็ทำตัวแย่ๆ งี่เง่า หรือทำให้อ้วนต้องปวดหัว พี่ขอโทษจริงๆ นะคะที่บางครั้งทำให้เทอต้องเหนื่อย 😔',
+  
+      'แต่ถึงพี่จะดื้อไปบ้าง พี่อยากให้อ้วนรู้ไว้นะ ว่าพี่รักอ้วนมากๆ รักเหมือนเดิมตั้งแต่วันแรกและจะรักให้มากกว่าเดิมอีก 🧸',
+  
+      'พี่อาจจะไม่ได้เพอร์เฟกต์ แต่พี่สัญญานะว่าจะพยายามเป็นผู้ชายที่ดีขึ้นเพื่ออ้วน จะดูแลอ้วนและดูแลความรักของเราให้ดีที่สุดเลย ✌🏻',
+  
+      'อยู่เป็นความรัก เป็นรอยยิ้มให้พี่แบบนี้ไปนานๆ นะคะ ไว้ถึงวันที่เราได้เจอกัน พี่จะกอดอ้วนให้ชื่นใจเลย รักอ้วนนะ 💗'
+  
+    ]
+  
+  };
+  
+  /* ═══════════════════════════════ */
+  
+  
+  const TOUCH = matchMedia('(pointer:coarse)').matches;
+  
+  const DPR   = Math.min(window.devicePixelRatio || 1, 2);
+  
+  const $ = id => document.getElementById(id);
+  
+  const pin=$('pin'), cdEl=$('cd'), gridEl=$('grid'), sndEl=$('snd'),
+  
+        yrEl=$('yr'), myAudio=$('myAudio'), dcount=$('dcount');
+  
+  
+  /* ---- ความสูงจอจริงบน iOS ---- */
+  
+  const setVH=()=>document.documentElement.style.setProperty('--vh',
+  
+    (window.visualViewport?visualViewport.height:innerHeight)+'px');
+  
+  setVH(); addEventListener('resize',setVH);
+  
+  addEventListener('orientationchange',()=>setTimeout(setVH,300));
+  
+  
+  /* ---- เพลง ---- */
+  
+  let isPlaying=false;
+  
+  function playMusic(){
+  
+    if(!myAudio) return;
+  
+    const p=myAudio.play();
+  
+    if(p) p.then(()=>{isPlaying=true; if(sndEl)sndEl.textContent='♫';})
+  
+          .catch(()=>{isPlaying=false; if(sndEl)sndEl.textContent='♪';});
+  
+  }
+  
+  if(sndEl&&myAudio){
+  
+    sndEl.onclick=()=>{
+  
+      if(isPlaying){myAudio.pause();isPlaying=false;sndEl.textContent='♪';}
+  
+      else playMusic();
+  
+    };
+  
+  }
+  
+  
+  /* ---- ล็อกสกรีน ---- */
+  
+  pin.oninput=()=>{
+  
+    pin.value=pin.value.replace(/\D/g,'');
+  
+    if(pin.value.length===4){
+  
+      if(pin.value===C.pin){ $('lock').classList.add('off'); pin.blur(); playMusic(); }
+  
+      else{ pin.classList.add('shake');
+  
+        setTimeout(()=>{pin.classList.remove('shake');pin.value='';},420); }
+  
+    }};
+  
+  if(!TOUCH) setTimeout(()=>pin.focus(),400);
+  
+  
+  /* ---- เคอร์เซอร์ (เดสก์ท็อป) ---- */
+  
+  let mx=innerWidth/2, my=innerHeight*0.46, cx=mx, cy=my, active=!TOUCH;
+  
+  if(!TOUCH){
+  
+    const cur=$('cur'), dot=$('dot');
+  
+    addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;active=true;
+  
+      dot.style.transform=`translate(${mx-2}px,${my-2}px)`});
+  
+    (function l(){cx+=(mx-cx)*.14;cy+=(my-cy)*.14;
+  
+      cur.style.transform=`translate(${cx-17}px,${cy-17}px)`;requestAnimationFrame(l)})();
+  
+    document.addEventListener('mouseover',e=>document.body.classList.toggle('hov',
+  
+      !!e.target.closest('.tc,button,input')));
+  
+  }
+  
+  
+  /* ══════ PARTICLE MORPH ══════ */
+  
+  const pc=$('pcanvas'), px=pc.getContext('2d');
+  
+  const off=document.createElement('canvas');
+  
+  const ox=off.getContext('2d',{willReadFrequently:true});
+  
+  let W,H,parts=[],wi=0,PS=2,REP=0,ready=false;
+  
+  
+  function targets(text){
+  
+    off.width=W; off.height=H; ox.clearRect(0,0,W,H);
+  
+    const thai=/[\u0E00-\u0E7F]/.test(text);
+  
+    const font = thai ? "'Kanit','Noto Sans Thai',sans-serif" : "'Instrument Serif',Georgia,serif";
+  
+    const wgt  = thai ? "300" : "italic 400";
+  
+    let size = Math.min(W*0.20, H*0.16);
+  
+    ox.font=`${wgt} ${size}px ${font}`;
+  
+    const maxW=W*0.84, m=ox.measureText(text).width;
+  
+    if(m>maxW){ size=size*maxW/m; ox.font=`${wgt} ${size}px ${font}`; }
+  
+    ox.fillStyle='#fff'; ox.textAlign='center'; ox.textBaseline='middle';
+  
+    ox.fillText(text, W/2, H*0.46);
+  
+  
+    PS = Math.max(1.8*DPR, size/34);
+  
+    const gap = Math.max(3, Math.round(size/22));
+  
+    const d=ox.getImageData(0,0,W,H).data, pts=[];
+  
+    for(let y=0;y<H;y+=gap) for(let x=0;x<W;x+=gap)
+  
+      if(d[(y*W+x)*4+3]>120) pts.push([x,y]);
+  
+    return pts;
+  
+  }
+  
+  function build(text){
+  
+    const pts=targets(text), n=Math.max(pts.length,parts.length);
+  
+    for(let i=0;i<n;i++){
+  
+      if(i<pts.length){
+  
+        if(!parts[i]) parts[i]={x:W/2+(Math.random()-.5)*W, y:H/2+(Math.random()-.5)*H,
+  
+          vx:0, vy:0, h:Math.random()<.5?332:190, a:0};
+  
+        parts[i].tx=pts[i][0]; parts[i].ty=pts[i][1]; parts[i].live=1;
+  
+      } else parts[i].live=0;
+  
     }
-    drawGlobe();
-    
-    /* ---------- นับเวลาที่คุยกัน ---------- */
-    const L={days:'วัน',hours:'ชม.',minutes:'นาที',seconds:'วิ'};
-    setInterval(()=>{
-      let d = new Date() - new Date(C.start); 
-      if (d < 0) d = 0;
-      
-      const val = {
-        days: Math.floor(d/864e5),
-        hours: Math.floor(d/36e5)%24,
-        minutes: Math.floor(d/6e4)%60,
-        seconds: Math.floor(d/1e3)%60
-      };
-      
-      if(cdEl) cdEl.innerHTML=Object.keys(val).map(k=>
-        `<div class="u"><div class="n">${String(val[k]).padStart(2,'0')}</div><div class="l">${L[k]}</div></div>`).join('');
-    },1000);
-    
-    /* ---------- การ์ดเอียง 3D ---------- */
-    if(gridEl) {
-      gridEl.innerHTML=C.notes.map((n,i)=>
-        `<div class="tc"><div class="idx">${String(i+1).padStart(2,'0')}</div><div class="txt">${n}</div></div>`).join('');
+  
+  }
+  
+  function resize(){
+  
+    const vh = window.visualViewport?visualViewport.height:innerHeight;
+  
+    W=pc.width=Math.floor(innerWidth*DPR); H=pc.height=Math.floor(vh*DPR);
+  
+    pc.style.width=innerWidth+'px'; pc.style.height=vh+'px';
+  
+    if(ready) build(C.words[wi]);
+  
+  }
+  
+  function tick(){
+  
+    px.clearRect(0,0,W,H);
+  
+    const r=(TOUCH?90:110)*DPR, MX=mx*DPR, MY=my*DPR;
+  
+    for(let i=0;i<parts.length;i++){
+  
+      const p=parts[i];
+  
+      p.vx+=(p.tx-p.x)*.014; p.vy+=(p.ty-p.y)*.014;
+  
+      if(active||REP>0){
+  
+        const ex=p.x-MX, ey=p.y-MY, dist=Math.hypot(ex,ey)||1, rr=r*(1+REP*1.6);
+  
+        if(dist<rr){const f=(1-dist/rr)*(3+REP*5); p.vx+=ex/dist*f; p.vy+=ey/dist*f}
+  
+      }
+  
+      p.vx*=.87; p.vy*=.87; p.x+=p.vx; p.y+=p.vy;
+  
+      p.a+=((p.live?1:0)-p.a)*.06;
+  
+      if(p.a<.02) continue;
+  
+      const sp=Math.min(Math.hypot(p.vx,p.vy)/8,1);
+  
+      px.fillStyle=`hsla(${p.h+sp*40},96%,${72+sp*20}%,${p.a})`;
+  
+      px.fillRect(p.x,p.y,PS,PS);
+  
     }
-    document.querySelectorAll('.tc').forEach(c=>{
+  
+    REP*=.94;
+  
+    requestAnimationFrame(tick);
+  
+  }
+  
+  addEventListener('resize',resize);
+  
+  if(window.visualViewport) visualViewport.addEventListener('resize',resize);
+  
+  resize();
+  
+  (document.fonts?document.fonts.ready:Promise.resolve()).then(()=>{
+  
+    ready=true; build(C.words[wi]); tick();
+  
+    setInterval(()=>{wi=(wi+1)%C.words.length; build(C.words[wi]);},3800);
+  
+  });
+  
+  if(TOUCH){
+  
+    const move=e=>{const t=e.touches[0]; mx=t.clientX; my=t.clientY; active=true;};
+  
+    addEventListener('touchstart',e=>{move(e);REP=1;},{passive:true});
+  
+    addEventListener('touchmove',move,{passive:true});
+  
+    addEventListener('touchend',()=>{active=false;},{passive:true});
+  
+  }
+  
+  addEventListener('scroll',()=>{
+  
+    const vh=window.visualViewport?visualViewport.height:innerHeight;
+  
+    pc.style.opacity=Math.max(0,1-scrollY/(vh*.8));
+  
+  },{passive:true});
+  
+  
+  /* ══════ โลกหมุน ══════ */
+  
+  const g=$('globe'), gx=g.getContext('2d');
+  
+  const v=(la,ln)=>{const p=la*Math.PI/180,l=ln*Math.PI/180;
+  
+    return[Math.cos(p)*Math.sin(l),Math.sin(p),Math.cos(p)*Math.cos(l)]};
+  
+  const A=v(C.a.lat,C.a.lng), B=v(C.b.lat,C.b.lng);
+  
+  const ang=Math.acos(Math.max(-1,Math.min(1,A[0]*B[0]+A[1]*B[1]+A[2]*B[2])));
+  
+  const slerp=t=>{const s=Math.sin(ang)||1,k1=Math.sin((1-t)*ang)/s,k2=Math.sin(t*ang)/s;
+  
+    return[A[0]*k1+B[0]*k2,A[1]*k1+B[1]*k2,A[2]*k1+B[2]*k2]};
+  
+  let rot=0, gs=0;
+  
+  function drawGlobe(){
+  
+    const w=g.clientWidth; if(!w){requestAnimationFrame(drawGlobe);return}
+  
+    const s=Math.floor(w*DPR); if(s!==gs){g.width=g.height=s;gs=s}
+  
+    const R=s*.37, cx0=s/2, cy0=s/2, tilt=-.36;
+  
+    const proj=([x,y,z],e=1)=>{
+  
+      let X=x*Math.cos(rot)+z*Math.sin(rot), Z=-x*Math.sin(rot)+z*Math.cos(rot);
+  
+      let Y=y*Math.cos(tilt)-Z*Math.sin(tilt); Z=y*Math.sin(tilt)+Z*Math.cos(tilt);
+  
+      return[cx0+X*R*e, cy0-Y*R*e, Z]};
+  
+    gx.clearRect(0,0,s,s);
+  
+    gx.lineWidth=Math.max(1,DPR*.8); gx.strokeStyle='rgba(126,232,250,.11)';
+  
+    for(let la=-60;la<=60;la+=30){gx.beginPath();let st=0;
+  
+      for(let ln=0;ln<=360;ln+=5){const[X,Y,Z]=proj(v(la,ln));
+  
+        if(Z<0){st=0;continue} st?gx.lineTo(X,Y):gx.moveTo(X,Y); st=1}gx.stroke()}
+  
+    for(let ln=0;ln<360;ln+=30){gx.beginPath();let st=0;
+  
+      for(let la=-90;la<=90;la+=5){const[X,Y,Z]=proj(v(la,ln));
+  
+        if(Z<0){st=0;continue} st?gx.lineTo(X,Y):gx.moveTo(X,Y); st=1}gx.stroke()}
+  
+    gx.beginPath();gx.arc(cx0,cy0,R,0,7);gx.strokeStyle='rgba(255,107,157,.22)';gx.stroke();
+  
+  
+    gx.beginPath();gx.strokeStyle='rgba(255,107,157,.9)';gx.lineWidth=1.7*DPR;
+  
+    gx.shadowBlur=14*DPR;gx.shadowColor='rgba(255,107,157,.9)';
+  
+    for(let t=0;t<=1.001;t+=.01){const e=1+Math.sin(Math.PI*t)*.30;
+  
+      const[X,Y]=proj(slerp(t),e); t?gx.lineTo(X,Y):gx.moveTo(X,Y)}gx.stroke();
+  
+  
+    const t=(Date.now()%3000)/3000, [dX,dY]=proj(slerp(t),1+Math.sin(Math.PI*t)*.30);
+  
+    gx.textAlign='center'; gx.textBaseline='middle';
+  
+    gx.font=`${13*DPR}px sans-serif`; gx.shadowBlur=12*DPR; gx.shadowColor='#ff6b9d';
+  
+    gx.fillStyle='#fff'; gx.fillText('❤',dX,dY);
+  
+  
+    [[A,'#7ee8fa'],[B,'#ff6b9d']].forEach(([pt,col])=>{const[X,Y,Z]=proj(pt);
+  
+      if(Z<0)return; gx.beginPath();gx.arc(X,Y,4.6*DPR,0,7);
+  
+      gx.fillStyle=col;gx.shadowColor=col;gx.shadowBlur=10*DPR;gx.fill()});
+  
+    gx.shadowBlur=0; rot+=.0035; requestAnimationFrame(drawGlobe);
+  
+  }
+  
+  drawGlobe();
+  
+  
+  /* ══════ นับเวลาที่คบกัน ══════ */
+  
+  const L={days:'วัน',hours:'ชม.',minutes:'นาที',seconds:'วิ'};
+  
+  function upd(){
+  
+    let d=new Date()-new Date(C.start); if(d<0)d=0;
+  
+    const val={days:Math.floor(d/864e5), hours:Math.floor(d/36e5)%24,
+  
+      minutes:Math.floor(d/6e4)%60, seconds:Math.floor(d/1e3)%60};
+  
+    if(cdEl) cdEl.innerHTML=Object.keys(val).map(k=>
+  
+      `<div class="u"><div class="n">${String(val[k]).padStart(2,'0')}</div><div class="l">${L[k]}</div></div>`).join('');
+  
+    if(dcount) dcount.textContent=`และจะนับต่อไปเรื่อยๆ นะ`;
+  
+  }
+  
+  upd(); setInterval(upd,1000);
+  
+  
+  /* ══════ การ์ด ══════ */
+  
+  if(gridEl) gridEl.innerHTML=C.notes.map((n,i)=>
+  
+    `<div class="tc"><div class="idx">${String(i+1).padStart(2,'0')}</div><div class="txt">${n}</div></div>`).join('');
+  
+  document.querySelectorAll('.tc').forEach(c=>{
+  
+    if(TOUCH){
+  
+      c.addEventListener('click',()=>{
+  
+        c.style.setProperty('--mx','50%'); c.style.setProperty('--my','50%');
+  
+        document.querySelectorAll('.tc').forEach(o=>o!==c&&o.classList.remove('lit'));
+  
+        c.classList.toggle('lit');
+  
+      });
+  
+    }else{
+  
       c.onmousemove=e=>{const r=c.getBoundingClientRect(),x=e.clientX-r.left,y=e.clientY-r.top;
-        c.style.setProperty('--mx',x+'px');c.style.setProperty('--my',y+'px');
-        c.style.transform=`perspective(900px) rotateY(${(x/r.width-.5)*13}deg) rotateX(${-(y/r.height-.5)*13}deg) translateZ(14px)`};
-      c.onmouseleave=()=>c.style.transform='';
-    });
-    
-    /* ---------- เผยข้อความทีละคำ ---------- */
-    document.querySelectorAll('.rv').forEach(el=>{
-      el.innerHTML=el.textContent.trim().split(' ').map(w=>`<span>${w}</span>`).join(' ');
-      [...el.children].forEach((s,i)=>s.style.transitionDelay=i*.07+'s');
-    });
-    
-    const observer = new IntersectionObserver(es => es.forEach(e => e.isIntersecting && e.target.classList.add('on')), { threshold: .35 });
-    document.querySelectorAll('.rv').forEach(el => observer.observe(el));
-    
-    /* ---------- ปุ่มเสียงเปิด/ปิดไฟล์เพลง MP3 ---------- */
-    let isPlaying = false;
-    if(sndEl && myAudio) {
-      sndEl.onclick = () => {
-        if (isPlaying) {
-          myAudio.pause();
-          sndEl.textContent = '♪';
-        } else {
-          myAudio.play();
-          sndEl.textContent = '♫';
-        }
-        isPlaying = !isPlaying;
-      };
+  
+        c.style.setProperty('--mx',x+'px'); c.style.setProperty('--my',y+'px'); c.classList.add('lit');
+  
+        c.style.transform=`perspective(900px) rotateY(${(x/r.width-.5)*13}deg) rotateX(${-(y/r.height-.5)*13}deg) translateZ(12px)`};
+  
+      c.onmouseleave=()=>{c.style.transform='';c.classList.remove('lit')};
+  
     }
-    if(yrEl) yrEl.textContent=new Date().getFullYear();
-</script>
+  
+  });
+  
+  
+  /* ══════ เผยข้อความทีละคำ ══════ */
+  
+  const obs=new IntersectionObserver(es=>es.forEach(e=>{
+  
+    if(e.isIntersecting) e.target.classList.add('on')}),{threshold:.25});
+  
+  document.querySelectorAll('.rv').forEach(el=>{
+  
+    el.innerHTML=el.textContent.trim().split(/\s+/).map(w=>`<span>${w}</span>`).join(' ');
+  
+    [...el.children].forEach((s,i)=>s.style.transitionDelay=i*.07+'s');
+  
+    obs.observe(el);
+  
+  });
+  
+  
+  $('na').textContent=C.a.name; $('nb').textContent=C.b.name;
+  
+  if(yrEl) yrEl.textContent=new Date().getFullYear();
+  
+  </script>
 </body>
 </html>
